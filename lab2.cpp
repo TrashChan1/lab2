@@ -39,8 +39,8 @@ public:
         xres = 400;
         yres = 200;
         w = 20.0;
-        dir[0] = 5.0f;
-        dir[1] = 2.0f;
+        dir[0] = 10.0f;
+        dir[1] = 4.0f;
         pos[0] = 0.0f+w;
         pos[1] = yres/2.0f; 
         redness = 0;
@@ -300,6 +300,8 @@ void render()
 	//clear the window
 	glClear(GL_COLOR_BUFFER_BIT);
 	g.redness -= 0.5;
+	if (g.redness < 0)
+	        g.redness = 0;
 	//draw the box
 	
 	if (2 * g.w > g.xres || 2 * g.w + 50 > g.yres)
