@@ -261,7 +261,7 @@ void physics()
         // because desired outcome is box heats up when it bounces. 
         //
         // This is where bounce is handled.
-        g.redness += 50;
+        g.redness += 60;
 	}
 	if (g.pos[0] <= g.w) {
 		g.pos[0] = g.w;
