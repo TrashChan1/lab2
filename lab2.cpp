@@ -21,7 +21,6 @@ using namespace std;
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
-#include <ctime>
 
 //some structures
 
@@ -32,7 +31,6 @@ public:
 	float w;
 	float dir[2];
 	float pos[2];
-	clock_t time;
     float redness;
     Global()
     {
@@ -44,7 +42,6 @@ public:
         pos[0] = 0.0f+w;
         pos[1] = yres/2.0f; 
         redness = 0;
-	time = clock();
     }
 
 } g;
@@ -258,10 +255,9 @@ void init_opengl(void)
 	//Set the screen background color
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 }
-void redness()
+void redden()
 {
-        g.redness = 255 - (clock() - g.time) / 200;
-        g.time = clock();
+        g.redness += 100;
         if (g.redness > 255) g.redness = 255;
         if (g.redness < 0) g.redness = 0;
 }
@@ -274,24 +270,24 @@ void physics()
 	if (g.pos[0] >= (g.xres-g.w)) {
 		g.pos[0] = (g.xres-g.w);
 		g.dir[0] = -g.dir[0];
-	        redness();
+	        redden();
 	}
 
 	if (g.pos[0] <= g.w) {
 		g.pos[0] = g.w;
 		g.dir[0] = -g.dir[0];
-	        redness();
+	        redden();
 	}
 
 	if (g.pos[1] <= g.w) {
 		g.pos[1] = g.w;
 		g.dir[1] = -g.dir[1];
-	        redness();
+	        redden();
 	}
 	if (g.pos[1] >= g.yres-g.w) {
 		g.pos[1] = g.yres - g.w;
 		g.dir[1] = -g.dir[1];
-	        redness();
+	        redden();
 	}
 }
 
@@ -299,7 +295,7 @@ void render()
 {
 	//clear the window
 	glClear(GL_COLOR_BUFFER_BIT);
-	g.redness -= 0.5;
+	g.redness -= 1;
 	if (g.redness < 0)
 	        g.redness = 0;
 	//draw the box
