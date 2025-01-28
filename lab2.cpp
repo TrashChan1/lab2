@@ -21,6 +21,7 @@ using namespace std;
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include <ctime>
 
 //some structures
 
@@ -29,18 +30,21 @@ public:
 	int xres, yres;
 
 	float w;
-	float dir;
+	float dir[2];
 	float pos[2];
+	clock_t time;
     float redness;
     Global()
     {
         xres = 400;
         yres = 200;
         w = 20.0;
-        dir = 30.0f;
+        dir[0] = 5.0f;
+        dir[1] = 2.0f;
         pos[0] = 0.0f+w;
         pos[1] = yres/2.0f; 
         redness = 0;
+	time = clock();
     }
 
 } g;
@@ -226,6 +230,13 @@ int X11_wrapper::check_keys(XEvent *e)
 		switch (key) {
 			case XK_a:
 				//the 'a' key was pressed
+			        g.dir[0] *= 0.8;
+				g.dir[1] *= 0.8;
+				break;
+			case XK_d:
+			        g.dir[0] *= 1.2;
+			        g.dir[1] *= 1.2;
+				
 				break;
 			case XK_Escape:
 				//Escape key was pressed
@@ -247,30 +258,41 @@ void init_opengl(void)
 	//Set the screen background color
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 }
-
+void redness()
+{
+        g.redness = 255 - (clock() - g.time) / 200;
+        g.time = clock();
+        if (g.redness > 255) g.redness = 255;
+        if (g.redness < 0) g.redness = 0;
+}
 void physics()
 {
 	
     //move the box
-	g.pos[0] += g.dir;
-    if (g.redness > 0) g.redness -= 1;
+	g.pos[0] += g.dir[0];
+	g.pos[1] += g.dir[1];
 	if (g.pos[0] >= (g.xres-g.w)) {
 		g.pos[0] = (g.xres-g.w);
-		g.dir = -g.dir;
-        // color handled here 
-        // because desired outcome is box heats up when it bounces. 
-        //
-        // This is where bounce is handled.
-        g.redness += 60;
+		g.dir[0] = -g.dir[0];
+	        redness();
 	}
+
 	if (g.pos[0] <= g.w) {
 		g.pos[0] = g.w;
-		g.dir = -g.dir;
-        g.redness += 50;
+		g.dir[0] = -g.dir[0];
+	        redness();
 	}
-    if (g.redness > 255) g.redness = 255;
 
-
+	if (g.pos[1] <= g.w) {
+		g.pos[1] = g.w;
+		g.dir[1] = -g.dir[1];
+	        redness();
+	}
+	if (g.pos[1] >= g.yres-g.w) {
+		g.pos[1] = g.yres - g.w;
+		g.dir[1] = -g.dir[1];
+	        redness();
+	}
 }
 
 void render()
@@ -278,8 +300,11 @@ void render()
 	//clear the window
 	glClear(GL_COLOR_BUFFER_BIT);
 	//draw the box
+	
+	if (2 * g.w > g.xres || 2 * g.w + 50 > g.yres)
+                return;
 	glPushMatrix();
-	glColor3ub(g.redness, 120, 120);
+	glColor3ub(g.redness, 0, 255 - g.redness);
 	glTranslatef(g.pos[0], g.pos[1], 0.0f);
 	glBegin(GL_QUADS);
 		glVertex2f(-g.w, -g.w);
