@@ -299,6 +299,7 @@ void render()
 {
 	//clear the window
 	glClear(GL_COLOR_BUFFER_BIT);
+	g.redness -= 0.5;
 	//draw the box
 	
 	if (2 * g.w > g.xres || 2 * g.w + 50 > g.yres)
