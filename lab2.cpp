@@ -6,8 +6,7 @@
 //date:            2025
 //purpose:         OpenGL sample program
 //
-//This program needs some refactoring.
-//We will do this in class together.
+// 1/31/2025 add some text
 //
 
 #include <iostream>
