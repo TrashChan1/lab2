@@ -21,6 +21,7 @@ using namespace std;
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include "fonts.h"
 
 //some structures
 
@@ -88,6 +89,7 @@ int main()
 	x11.swapBuffers();
 	usleep(200);
     }
+    cleanup_fonts();
     return 0;
 }
 
@@ -254,6 +256,9 @@ void init_opengl(void)
     glOrtho(0, g.xres, 0, g.yres, -1, 1);
     //Set the screen background color
     glClearColor(0.1, 0.1, 0.1, 1.0);
+    //enables fonts
+	glEnable(GL_TEXTURE_2D);
+	initialize_fonts();
 }
 void redden()
 {
@@ -295,6 +300,8 @@ void render()
 {
     //clear the window
     glClear(GL_COLOR_BUFFER_BIT);
+
+
     g.redness -= 1;
     if (g.redness < 0)
 	g.redness = 0;
@@ -312,6 +319,18 @@ void render()
     glVertex2f( g.w, -g.w);
     glEnd();
     glPopMatrix();
+
+     Rect r;
+     r.bot = g.yres - 20;
+     r.left = 10;
+     r.center = 0;
+	ggprint8b(&r, 16, 0x00ff0000, "3350 - lab-2");
+	ggprint8b(&r, 16, 0x00ffff00, "Esc to exit");
+	ggprint8b(&r, 16, 0x00ffff00, "D to speed up");
+	ggprint8b(&r, 16, 0x00ffff00, "A to slow down");
+
+
+
 }
 
 
