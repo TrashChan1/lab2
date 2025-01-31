@@ -20,6 +20,7 @@ using namespace std;
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include "fonts.h"
 
 #define CALL_ON_BOXES(method) for (auto& box : g.boxes){ box.method(); }
 
@@ -175,6 +176,7 @@ int main()
       x11.swapBuffers();
       usleep(200);
    }
+   cleanup_fonts();
    return 0;
 }
 
@@ -329,15 +331,18 @@ int X11_wrapper::check_keys(XEvent *e)
 
 void init_opengl(void)
 {
-   //OpenGL initialization
-   glViewport(0, 0, g.xres, g.yres);
-   //Initialize matrices
-   glMatrixMode(GL_PROJECTION); glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-   //Set 2D mode (no perspective)
-   glOrtho(0, g.xres, 0, g.yres, -1, 1);
-   //Set the screen background color
-   glClearColor(0.1, 0.1, 0.1, 1.0);
+    //OpenGL initialization
+    glViewport(0, 0, g.xres, g.yres);
+    //Initialize matrices
+    glMatrixMode(GL_PROJECTION); glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+    //Set 2D mode (no perspective)
+    glOrtho(0, g.xres, 0, g.yres, -1, 1);
+    //Set the screen background color
+    glClearColor(0.1, 0.1, 0.1, 1.0);
+    //enables fonts
+	glEnable(GL_TEXTURE_2D);
+	initialize_fonts();
 }
 
 void physics_all()
@@ -358,6 +363,15 @@ void render()
       return;
    //render_boxes_all();
    CALL_ON_BOXES(render_box)
+
+    Rect r;
+    r.bot = g.yres - 20;
+    r.left = 10;
+    r.center = 0;
+	ggprint8b(&r, 16, 0x00ff0000, "3350 - lab-2");
+	ggprint8b(&r, 16, 0x00ffff00, "Esc to exit");
+	ggprint8b(&r, 16, 0x00ffff00, "D to speed up");
+	ggprint8b(&r, 16, 0x00ffff00, "A to slow down");
 }
 
 
