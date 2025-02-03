@@ -311,6 +311,7 @@ int X11_wrapper::check_keys(XEvent *e)
 {
    if (e->type != KeyPress && e->type != KeyRelease)
       return 0;
+
    int key = XLookupKeysym(&e->xkey, 0);
    if (e->type == KeyPress) {
       switch (key) {
