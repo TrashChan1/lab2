@@ -160,6 +160,7 @@ void render(void);
 
 int main()
 {
+
    init_opengl();
    int done = 0;
    //main game loop
